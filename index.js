@@ -33,20 +33,20 @@ async function run() {
         await client.connect();
 
         const coffeesCollection = client.db('coffeeDB').collection('coffees')
-
+        // get method
         app.get('/coffees', async (req, res) => {
             const cursor = coffeesCollection.find();
             const result = await cursor.toArray()
             res.send(result)
         })
-
-        app.get('/coffees/:id', async(req, res) => {
+        // get single data method
+        app.get('/coffees/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: new ObjectId(id)};
+            const query = { _id: new ObjectId(id) };
             const result = await coffeesCollection.findOne(query)
             res.send(result)
         })
-
+        // create method 
         app.post('/coffees', async (req, res) => {
 
             const newCoffee = req.body
@@ -55,7 +55,19 @@ async function run() {
             const result = await coffeesCollection.insertOne(newCoffee)
             res.send(result)
         })
+        // update method
+        app.put('/coffees/:id', async(req, res) => {
 
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const updateCoffee = req.body
+            const updateDoc = {
+                $set: {updateCoffee}
+            }
+            const result = await coffeesCollection.updateOne(filter,updateDoc )
+            res.send(result)
+        })
+        // delete method
         app.delete('/coffees/:id', async (req, res) => {
             const id = req.params.id
             console.log(id);
